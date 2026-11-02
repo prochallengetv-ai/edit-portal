@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Portal — Pro Video & Audio Tools for Editors</title>
+  <meta name="description" content="100% Client-Side Web Tools for Video Editors & Motion Designers. Beat Marker, Audio Studio, Quality Boost, AE Project Downgrader, and Expression Generator." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&family=Michroma&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='20,15 85,50 20,85' fill='%23df71dc'/></svg>">
+</head>
+<body class="theme-nle">
+
+  <!-- Custom Cursor -->
+  <div id="cursor" aria-hidden="true"></div>
+  <div id="cursor-follower" aria-hidden="true"></div>
+
+  <!-- Starfield Canvas/Layer -->
+  <canvas class="starfield" aria-hidden="true"></canvas>
+
+  <!-- Global Scroll Progress -->
+  <div id="scrollProgress" aria-hidden="true"></div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Cookie / Local Storage Banner -->
+  <div id="cookieBanner" class="cookie-banner hidden" role="dialog" aria-label="Privacy preference">
+    <div class="cookie-inner">
+      <div class="cookie-text">
+        <span class="cookie-icon">⚡</span>
+        <span><strong>100% Client-Side.</strong> All media and files stay strictly on your device. We use local storage purely to remember your preferences.</span>
+      </div>
+      <button id="cookieAccept" class="ep-btn ep-btn--sm ep-btn--glow">Got it</button>
+    </div>
+  </div>
+
+  <!-- Cinematic Intro Loader -->
+  <div id="loader" class="loader-overlay" aria-label="Loading Edit Portal">
+    <div class="ld-shutter ld-shutter--top"></div>
+    <div class="ld-shutter ld-shutter--bottom"></div>
+    
+    <div class="ld-stage">
+      <div class="ld-brand">
+        <div class="ld-logo">
+          <svg viewBox="0 0 60 60" width="56" height="56" fill="none">
+            <polygon points="12,8 52,30 12,52" fill="url(#ld-grad)" />
+            <polygon points="20,18 44,30 20,42" fill="#06070c" />
+            <defs>
+              <linearGradient id="ld-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#b691ff" />
+                <stop offset="50%" stop-color="#df71dc" />
+                <stop offset="100%" stop-color="#f15aa9" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="ld-shine"></div>
+        </div>
+        <div class="ld-word" aria-label="EDIT PORTAL">
+          <span style="--i:0">E</span><span style="--i:1">D</span><span style="--i:2">I</span><span style="--i:3">T</span>
+          <span class="ld-space"></span>
+          <span style="--i:4">P</span><span style="--i:5">O</span><span style="--i:6">R</span><span style="--i:7">T</span><span style="--i:8">A</span><span style="--i:9">L</span>
+        </div>
+      </div>
+
+      <div class="ld-timeline">
+        <div class="ld-track">
+          <!-- 6 clips colored via custom properties -->
+          <div class="ld-clip" style="--l:0; --w:18; --c:#b691ff;"></div>
+          <div class="ld-clip" style="--l:19; --w:14; --c:#df71dc;"></div>
+          <div class="ld-clip" style="--l:34; --w:22; --c:#f15aa9;"></div>
+          <div class="ld-clip" style="--l:57; --w:12; --c:#818cf8;"></div>
+          <div class="ld-clip" style="--l:70; --w:16; --c:#c084fc;"></div>
+          <div class="ld-clip" style="--l:87; --w:13; --c:#ec4899;"></div>
+          <div id="loader-progress" class="ld-head"></div>
+        </div>
+      </div>
+
+      <div class="ld-meta">
+        <span class="ld-fps">24 FPS</span>
+        <span id="loaderTc" class="ld-tc font-mono">00:00:00:00</span>
+        <span class="ld-status">INITIALIZING WORKSPACE...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 1. HOMEPAGE VIEW: <main id="home">                                        -->
+  <!-- ========================================================================= -->
+  <main id="home" class="spa-view">
+
+    <!-- Top Navigation -->
+    <header id="nav" class="nav-header">
+      <div class="nav-container">
+        <a href="/" class="nav-brand" aria-label="Edit Portal Home">
+          <svg class="brand-glyph" viewBox="0 0 40 40" width="30" height="30">
+            <polygon points="8,5 35,20 8,35" fill="url(#nav-brand-g)" />
+            <polygon points="14,12 30,20 14,28" fill="#06070c" />
+            <defs>
+              <linearGradient id="nav-brand-g" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#b691ff" />
+                <stop offset="100%" stop-color="#f15aa9" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <span class="brand-text">EDIT<span class="brand-glow">PORTAL</span></span>
+          <span class="brand-badge">2.0</span>
+        </a>
+
+        <nav class="nav-links">
+          <a href="#hero" class="nav-tab is-active" data-spy="hero">Overview</a>
+          <a href="#tools" class="nav-tab" data-spy="tools">Tools</a>
+          <a href="#portal" class="nav-tab" data-spy="portal">The Portal</a>
+          <a href="#story" class="nav-tab" data-spy="story">Showcase</a>
+        </nav>
+
+        <div class="nav-actions">
+          <a href="/beat-marker" class="ep-btn ep-btn--glow ep-btn--sm" data-tool="beat-marker">
+            <span>Launch Suite</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Signature Lateral Editor Timeline Scrubber -->
+    <aside id="timeline" class="tl-dock" aria-label="Timeline navigation scrubber">
+      <div class="tl-header">
+        <span class="tl-rec-dot"></span>
+        <span class="tl-label">TIMELINE</span>
+      </div>
+      <div class="tl-track-wrap">
+        <div class="tl-ruler">
+          <span>00:00</span>
+          <span>00:20</span>
+          <span>00:40</span>
+          <span>01:00</span>
+          <span>01:20</span>
+        </div>
+        <div class="tl-rail">
+          <div id="tlFill" class="tl-fill"></div>
+          
+          <div class="tl-clips">
+            <button class="tl-clip is-active" data-target="hero" title="Section 00 / Hero">
+              <span class="tl-clip-id">00</span>
+              <span class="tl-clip-name">HERO</span>
+            </button>
+            <button class="tl-clip" data-target="tools" title="Section 01 / Tools">
+              <span class="tl-clip-id">01</span>
+              <span class="tl-clip-name">TOOLS</span>
+            </button>
+            <button class="tl-clip" data-target="portal" title="Section 02 / The Portal">
+              <span class="tl-clip-id">02</span>
+              <span class="tl-clip-name">PORTAL</span>
+            </button>
+            <button class="tl-clip" data-target="why" title="Section 03 / Why Edit Portal">
+              <span class="tl-clip-id">03</span>
+              <span class="tl-clip-name">ENGINE</span>
+            </button>
+            <button class="tl-clip" data-target="story" title="Section 04 / Story & Reel">
+              <span class="tl-clip-id">04</span>
+              <span class="tl-clip-name">REEL</span>
+            </button>
+            <button class="tl-clip" data-target="contact" title="Section 05 / Contact">
+              <span class="tl-clip-id">05</span>
+              <span class="tl-clip-name">JOIN</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="tl-footer font-mono">
+        <span class="tl-tc-lbl">TC:</span>
+        <span id="tlNow" class="tl-tc-val">00:00:00:00</span>
+      </div>
+    </aside>
+
+    <!-- SECTION 00: HERO & PROGRAM MONITOR -->
+    <section id="hero" class="hero-section">
+      <div class="hero-grid">
+        <div class="hero-content">
+          <div class="hero-pill font-mono">
+            <span class="hero-pill-led"></span>
+            100% IN-BROWSER &bull; ZERO SERVER UPLOAD
+          </div>
+          <h1 class="hero-title">
+            THE EDITING SUITE <br />
+            <span class="text-gradient">INSIDE YOUR BROWSER.</span>
+          </h1>
+          <p class="hero-desc">
+            Ultra-fast, studio-grade DSP audio tools, WebGL upscaling, After Effects cue-marker sync, and expression generators built by editors, for editors.
+          </p>
+          <div class="hero-btns">
+            <a href="/beat-marker" class="ep-btn ep-btn--hero ep-btn--glow" data-tool="beat-marker">
+              <span>Start Beat Marker</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            </a>
+            <a href="#tools" class="ep-btn ep-btn--glass">
+              <span>Explore All 5 Tools</span>
+            </a>
+          </div>
+          <div class="hero-tags font-mono">
+            <span>&bull; Web Audio API</span>
+            <span>&bull; WebGL2 Shaders</span>
+            <span>&bull; XMP Cue Markers</span>
+            <span>&bull; Binary AEP Patcher</span>
+          </div>
+        </div>
+
+        <!-- Program Monitor Simulation -->
+        <div class="hero-monitor-wrap">
+          <div id="monitor" class="nle-monitor">
+            <div class="monitor-header">
+              <div class="monitor-title font-mono">
+                <span class="mon-badge">PROGRAM</span>
+                <span>EDIT_PORTAL_SHOWCASE_24FPS.SEQ</span>
+              </div>
+              <div class="monitor-meta font-mono">
+                <span class="mon-res">1920x1080</span>
+                <span class="mon-fps">23.976 fps</span>
+              </div>
+            </div>
+
+            <div class="monitor-screen">
+              <!-- Video / Canvas Fallback -->
+              <video id="promoVideo" class="monitor-video" playsinline muted loop></video>
+              <canvas id="promoCanvas" class="monitor-canvas"></canvas>
+
+              <!-- Corner Crop Marks -->
+              <div class="monitor-crop monitor-crop--tl"></div>
+              <div class="monitor-crop monitor-crop--tr"></div>
+              <div class="monitor-crop monitor-crop--bl"></div>
+              <div class="monitor-crop monitor-crop--br"></div>
+
+              <!-- Center Crosshair Safe Area -->
+              <div class="monitor-safe-box">
+                <div class="monitor-crosshair"></div>
+              </div>
+
+              <!-- HUD Overlay in corner -->
+              <div class="monitor-hud font-mono">
+                <div class="hud-item"><span class="hud-lbl">REC</span> <span class="hud-val text-neon-green">READY</span></div>
+                <div class="hud-item"><span class="hud-lbl">SMPTE</span> <span id="promoTc" class="hud-val text-magenta">00:00:00:00</span></div>
+              </div>
+            </div>
+
+            <!-- Scrubber bar -->
+            <div id="promoScrub" class="monitor-scrubber" title="Drag to scrub">
+              <div class="scrub-track">
+                <div id="promoFill" class="scrub-fill"></div>
+                <div id="promoHead" class="scrub-head"></div>
+              </div>
+            </div>
+
+            <!-- Monitor Transport Bar -->
+            <div class="monitor-controls">
+              <div class="ctl-left">
+                <button id="promoPlay" class="mon-btn" title="Play / Pause (Space)">
+                  <svg class="ic-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20"></polygon></svg>
+                  <svg class="ic-pause hidden" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                </button>
+                <button id="promoSound" class="mon-btn" title="Mute / Unmute">
+                  <svg class="ic-muted" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                  <svg class="ic-sound hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                  <span class="monitor-sound-txt font-mono">MUTED</span>
+                </button>
+              </div>
+
+              <div class="ctl-center font-mono">
+                <span class="ctl-in">IN 00:00:00</span>
+                <span class="ctl-dur">DUR 00:01:20</span>
+                <span class="ctl-out">OUT 00:01:20</span>
+              </div>
+
+              <div class="ctl-right">
+                <button id="promoFull" class="mon-btn" title="Fullscreen">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Strip -->
+      <div id="stats" class="stats-strip" data-reveal>
+        <div class="stat-box">
+          <div class="stat-val font-mono"><span class="stats-num" data-count="600" data-suffix="+">0</span></div>
+          <div class="stat-lbl">Beats Detected Daily</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val font-mono"><span class="stats-num" data-count="8" data-suffix="K+">0</span></div>
+          <div class="stat-lbl">AE Projects Downgraded</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val font-mono"><span class="stats-num" data-count="1.3" data-decimals="1" data-suffix="M">0</span></div>
+          <div class="stat-lbl">Keyframes Generated</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val font-mono"><span class="stats-num" data-count="100" data-suffix="%">0</span></div>
+          <div class="stat-lbl">Private (Zero Cloud Upload)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 01: TOOLS SHOWCASE -->
+    <section id="tools" class="section-container">
+      <div class="section-head" data-reveal>
+        <span class="section-tag font-mono">01 // ESSENTIAL EDITING TOOLS</span>
+        <h2 class="section-title">BUILT FOR REAL TIMELINE WORKFLOWS.</h2>
+        <p class="section-subtitle">Zero upload wait times. Zero paywalls. Run heavy DSP and WebGL algorithms locally in your browser.</p>
+      </div>
+
+      <div class="tgrid">
+
+        <!-- Tool 1: Beat Marker -->
+        <div class="tcard" style="--glow: 168 85 247;" data-tool="beat-marker">
+          <div class="tb-grid"></div>
+          <div class="tb-crop tb-crop--tl"></div>
+          <div class="tb-crop tb-crop--br"></div>
+          <div class="tb-shine"></div>
+          <div class="tcard-top">
+            <div class="tcard-icon-wrap" style="color:#b691ff;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+            </div>
+            <span class="tcard-badge font-mono">AE CUE WAV</span>
+          </div>
+          <h3 class="tcard-title">Beat Marker</h3>
+          <p class="tcard-desc">
+            Extract transient kick/snare peaks, calculate BPM automatically, tap manual beats, and export directly as an Adobe XMP CUE WAV.
+          </p>
+          <div class="tcard-tags font-mono">
+            <span>RMS Onset</span>
+            <span>40-200Hz Filter</span>
+            <span>XMP Metadata</span>
+          </div>
+          <div class="tcard-footer">
+            <span class="tcard-action">Launch Beat Marker &rarr;</span>
+          </div>
+        </div>
+
+        <!-- Tool 2: Audio Studio -->
+        <div class="tcard" style="--glow: 236 72 153;" data-tool="audio-studio">
+          <div class="tb-grid"></div>
+          <div class="tb-crop tb-crop--tl"></div>
+          <div class="tb-crop tb-crop--br"></div>
+          <div class="tb-shine"></div>
+          <div class="tcard-top">
+            <div class="tcard-icon-wrap" style="color:#f15aa9;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+            </div>
+            <span class="tcard-badge font-mono">DSP WORKSTATION</span>
+          </div>
+          <h3 class="tcard-title">Audio Studio</h3>
+          <p class="tcard-desc">
+            Create Sped Up, Slowed + Reverb, Nightcore, and Bass Boosted edits instantly. Features procedural stereo reverb, trim handles, and direct handoff to Beat Marker.
+          </p>
+          <div class="tcard-tags font-mono">
+            <span>Convolution Reverb</span>
+            <span>90Hz Lowshelf</span>
+            <span>Speed/Pitch Sync</span>
+          </div>
+          <div class="tcard-footer">
+            <span class="tcard-action">Open Audio Studio &rarr;</span>
+          </div>
+        </div>
+
+        <!-- Tool 3: Quality Boost (with split view preview) -->
+        <div class="tcard tb--qb" style="--glow: 244 114 182;" data-tool="quality-boost">
+          <div class="tb-grid"></div>
+          <div class="tb-crop tb-crop--tl"></div>
+          <div class="tb-crop tb-crop--br"></div>
+          <div class="tb-shine"></div>
+          <div class="tcard-top">
+            <div class="tcard-icon-wrap" style="color:#df71dc;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+            </div>
+            <span class="tcard-badge font-mono">WEBGL2 SHADERS</span>
+          </div>
+          <h3 class="tcard-title">Quality Boost</h3>
+          <p class="tcard-desc">
+            Clean up compression artifacts, apply edge-preserving bilateral denoise, and upscale videos/stills to 4K without watermarks.
+          </p>
+          <!-- Split view visual demo -->
+          <div class="tbq-split" aria-label="720p vs 1440p comparison preview">
+            <div class="tbq-before">
+              <span class="tbq-tag">720p Compressed</span>
+            </div>
+            <div class="tbq-line"></div>
+            <div class="tbq-after">
+              <span class="tbq-tag font-bold">1440p Restored</span>
+            </div>
+          </div>
+          <div class="tcard-tags font-mono">
+            <span>Bilateral Denoise</span>
+            <span>CAS Sharpen</span>
+            <span>Multi-scale Pro</span>
+          </div>
+          <div class="tcard-footer">
+            <span class="tcard-action">Enhance Media &rarr;</span>
+          </div>
+        </div>
+
+        <!-- Tool 4: AE File Converter -->
+        <div class="tcard" style="--glow: 129 140 248;" data-tool="ae-converter">
+          <div class="tb-grid"></div>
+          <div class="tb-crop tb-crop--tl"></div>
+          <div class="tb-crop tb-crop--br"></div>
+          <div class="tb-shine"></div>
+          <div class="tcard-top">
+            <div class="tcard-icon-wrap" style="color:#818cf8;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path><polyline points="16 16 12 12 8 16"></polyline></svg>
+            </div>
+            <span class="tcard-badge font-mono">RIFX BINARY PATCH</span>
+          </div>
+          <h3 class="tcard-title">AE File Converter</h3>
+          <p class="tcard-desc">
+            Downgrade After Effects projects (<span class="font-mono">.aep</span>) and presets (<span class="font-mono">.ffx</span>) from version 2025/2024 all the way back to CC 2018 in milliseconds.
+          </p>
+          <div class="tcard-tags font-mono">
+            <span>Egg! Chunk Parser</span>
+            <span>Zero Data Loss</span>
+            <span>Instant Patch</span>
+          </div>
+          <div class="tcard-footer">
+            <span class="tcard-action">Downgrade AEP &rarr;</span>
+          </div>
+        </div>
+
+        <!-- Tool 5: Expression Generator -->
+        <div class="tcard" style="--glow: 192 132 252;" data-tool="expressions">
+          <div class="tb-grid"></div>
+          <div class="tb-crop tb-crop--tl"></div>
+          <div class="tb-crop tb-crop--br"></div>
+          <div class="tb-shine"></div>
+          <div class="tcard-top">
+            <div class="tcard-icon-wrap" style="color:#c084fc;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            </div>
+            <span class="tcard-badge font-mono">EXTENDSCRIPT + JS</span>
+          </div>
+          <h3 class="tcard-title">Expression Generator</h3>
+          <p class="tcard-desc">
+            Parametric expression library with real-time 60 FPS canvas animation previews. Inertial bounce, organic wiggle, loop ping-pong, and countdown counters.
+          </p>
+          <div class="tcard-tags font-mono">
+            <span>Live 60fps Math</span>
+            <span>Slider Tuning</span>
+            <span>1-Click Copy</span>
+          </div>
+          <div class="tcard-footer">
+            <span class="tcard-action">Browse Expressions &rarr;</span>
+          </div>
+        </div>
+
+        <!-- Tool 6: Smooth Slow-Mo -->
+        <div class="tcard" style="--glow: 56 189 248;" data-tool="slow-mo">
+          <div class="tb-grid"></div>
+          <div class="tb-crop tb-crop--tl"></div>
+          <div class="tb-crop tb-crop--br"></div>
+          <div class="tb-shine"></div>
+          <div class="tcard-top">
+            <div class="tcard-icon-wrap" style="color:#38bdf8;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <span class="tcard-badge font-mono">60 FPS OPTICAL FLOW</span>
+          </div>
+          <h3 class="tcard-title">Smooth Slow-Mo</h3>
+          <p class="tcard-desc">
+            Convert standard 24/30 FPS video clips into ultra-smooth slow motion using bidirectional frame interpolation and temporal motion blending. 100% in browser.
+          </p>
+          <div class="tcard-tags font-mono">
+            <span>Optical Flow</span>
+            <span>Motion Vectors</span>
+            <span>0.10x to 0.75x</span>
+          </div>
+          <div class="tcard-footer">
+            <span class="tcard-action">Slow Motion &rarr;</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 02: THE PORTAL (Bento Grid) -->
+    <section id="portal" class="section-container">
+      <div class="section-head" data-reveal>
+        <span class="section-tag font-mono">02 // THE PORTAL ARCHITECTURE</span>
+        <h2 class="section-title">ENGINEERED FOR EXTREME VELOCITY.</h2>
+        <p class="section-subtitle">How Edit Portal replaces bloated desktop utilities with lightning-fast browser-native computing.</p>
+      </div>
+
+      <div class="portal-bento">
+
+        <!-- Bento 1: Animated NLE Tracks (Large Tile) -->
+        <div class="pb-tile pb-tracks" data-reveal>
+          <div class="pb-tracks-head">
+            <span class="pb-tracks-label font-mono">MULTI-TRACK TIMELINE SIMULATION</span>
+            <span class="pb-tracks-status font-mono text-neon-green">&bull; PLAYING AT 60 FPS</span>
+          </div>
+          
+          <div class="tracks-stage">
+            <div class="tracks-head"></div>
+            
+            <!-- Video Track 2 -->
+            <div class="track-row">
+              <span class="track-id font-mono">V2</span>
+              <div class="track-lane">
+                <div class="track-strip track-run--slow">
+                  <span class="nle-block bl-purple">Motion Graphics</span>
+                  <span class="nle-block bl-pink">Text Glitch</span>
+                  <span class="nle-block bl-cyan">Overlay FX</span>
+                  <span class="nle-block bl-purple">Motion Graphics</span>
+                  <span class="nle-block bl-pink">Text Glitch</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Video Track 1 -->
+            <div class="track-row">
+              <span class="track-id font-mono">V1</span>
+              <div class="track-lane">
+                <div class="track-strip track-run--rev">
+                  <span class="nle-block bl-blue">Main Clip A</span>
+                  <span class="nle-block bl-amber">Transition B</span>
+                  <span class="nle-block bl-blue">Main Clip C</span>
+                  <span class="nle-block bl-rose">Cut Point</span>
+                  <span class="nle-block bl-blue">Main Clip A</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Audio Track 1 -->
+            <div class="track-row">
+              <span class="track-id font-mono">A1</span>
+              <div class="track-lane">
+                <div class="track-strip">
+                  <span class="nle-block bl-green">BPM Waveform (138)</span>
+                  <span class="nle-block bl-green">Impact Drop</span>
+                  <span class="nle-block bl-teal">Vocal Chop Reverb</span>
+                  <span class="nle-block bl-green">BPM Waveform (138)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="pb-tile-meta">
+            <h4>Live NLE Playhead Engine</h4>
+            <p>Runs directly on modern browser Canvas and Web Audio contexts without eating up your GPU VRAM.</p>
+          </div>
+        </div>
+
+        <!-- Bento 2: 100% Client-Side Privacy -->
+        <div class="pb-tile pb-privacy" data-reveal>
+          <div class="pb-icon">🔒</div>
+          <h3 class="font-display">Zero Server Upload</h3>
+          <p>
+            Your unreleased project files, client footage, and copyrighted songs never touch a server. All computation runs locally via WebAssembly, WebGL2 shaders, and Web Audio.
+          </p>
+          <div class="pb-stat font-mono">0.00 KB SENT TO CLOUD</div>
+        </div>
+
+        <!-- Bento 3: XMP Marker Bridge -->
+        <div class="pb-tile pb-xmp" data-reveal>
+          <div class="pb-icon">🎛️</div>
+          <h3 class="font-display">Adobe XMP Integration</h3>
+          <p>
+            We inject native cue markers into RIFF WAV file headers. Just drag the exported WAV into Premiere Pro or After Effects and your beat markers appear automatically on the timeline.
+          </p>
+          <div class="pb-badge font-mono">ADOBE CUE MARKER COMPATIBLE</div>
+        </div>
+
+        <!-- Bento 4: Zero Install / No Login -->
+        <div class="pb-tile pb-fast" data-reveal>
+          <div class="pb-icon">⚡</div>
+          <h3 class="font-display">Zero Friction Access</h3>
+          <p>
+            No accounts, no subscriptions, no verification emails, and no watermarks. Bookmark the URL and start cutting immediately.
+          </p>
+          <div class="pb-badge font-mono">FREE & OPEN TO ALL EDITORS</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 03: WHY EDIT PORTAL -->
+    <section id="why" class="section-container">
+      <div class="section-head" data-reveal>
+        <span class="section-tag font-mono">03 // ARCHITECTURAL BENCHMARKS</span>
+        <h2 class="section-title">WHY TOP EDITORS SWITCH TO CLIENT-SIDE.</h2>
+      </div>
+
+      <div class="why-grid">
+        <div class="why-card" data-reveal>
+          <div class="why-num font-mono">01</div>
+          <h3 class="why-title">Instant Rendering</h3>
+          <p class="why-desc">No queue times or cloud processing servers. Whether analyzing 30 minutes of stereo audio or patching an AEP file, execution happens in your browser RAM at hardware speed.</p>
+        </div>
+        <div class="why-card" data-reveal>
+          <div class="why-num font-mono">02</div>
+          <h3 class="why-title">True Creative Privacy</h3>
+          <p class="why-desc">Client NDA footage and unreleased tracks remain strictly protected. Since no upload occurs, there is zero risk of data leak or server-side logging.</p>
+        </div>
+        <div class="why-card" data-reveal>
+          <div class="why-num font-mono">03</div>
+          <h3 class="why-title">Frame-Accurate Math</h3>
+          <p class="why-desc">Calculated specifically for broadcast frame rates (23.976, 24, 25, 29.97, 30, and 60 FPS) to guarantee sub-frame precision on every cut point.</p>
+        </div>
+        <div class="why-card" data-reveal>
+          <div class="why-num font-mono">04</div>
+          <h3 class="why-title">Always Free & Open</h3>
+          <p class="why-desc">No bait-and-switch trial models. Built with passion to empower video editors, TikTok creators, and VFX artists around the world.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 04: STORY & EDIT REEL -->
+    <section id="story" class="section-container">
+      <div class="section-head" data-reveal>
+        <span class="section-tag font-mono">04 // MADE WITH EDIT PORTAL</span>
+        <h2 class="section-title">HIGH-ENERGY SHOWCASE EDITS.</h2>
+        <p class="section-subtitle">Synced with Beat Marker, enhanced with Quality Boost, and tuned with Audio Studio.</p>
+      </div>
+
+      <div class="edit-reel">
+        <!-- Reel Card 1 -->
+        <div class="edit-card" data-reel="1">
+          <div class="edit-ratio">
+            <canvas class="edit-canvas" data-seed="1"></canvas>
+            <video class="edit-vid" playsinline loop muted></video>
+            <div class="edit-overlay">
+              <button class="edit-play" aria-label="Play showcase edit">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              </button>
+              <div class="edit-info">
+                <span class="edit-tag font-mono">TIKTOK EDIT // 160 BPM</span>
+                <h4 class="edit-name">Cyberpunk Transition Sync</h4>
+                <p class="edit-meta font-mono">Audio Studio (Sped Up) + Beat Marker</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reel Card 2 -->
+        <div class="edit-card" data-reel="2">
+          <div class="edit-ratio">
+            <canvas class="edit-canvas" data-seed="2"></canvas>
+            <video class="edit-vid" playsinline loop muted></video>
+            <div class="edit-overlay">
+              <button class="edit-play" aria-label="Play showcase edit">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              </button>
+              <div class="edit-info">
+                <span class="edit-tag font-mono">ANIME AMV // 1440P</span>
+                <h4 class="edit-name">Neon Strike Speed Ramp</h4>
+                <p class="edit-meta font-mono">Quality Boost (Fast Mode Anime)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reel Card 3 -->
+        <div class="edit-card" data-reel="3">
+          <div class="edit-ratio">
+            <canvas class="edit-canvas" data-seed="3"></canvas>
+            <video class="edit-vid" playsinline loop muted></video>
+            <div class="edit-overlay">
+              <button class="edit-play" aria-label="Play showcase edit">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              </button>
+              <div class="edit-info">
+                <span class="edit-tag font-mono">REEL // SLOWED + REVERB</span>
+                <h4 class="edit-name">Midnight Tokyo Drift</h4>
+                <p class="edit-meta font-mono">Audio Studio + Inertial Bounce</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 05: CONTACT & COMMUNITY -->
+    <section id="contact" class="section-container">
+      <div class="contact-card" data-reveal>
+        <div class="contact-content">
+          <span class="section-tag font-mono">05 // JOIN THE COMMUNITY</span>
+          <h2 class="section-title">CONNECT WITH 20,000+ EDITORS.</h2>
+          <p class="section-subtitle">
+            Request new tools, report After Effects project compatibility edge-cases, or share your edit presets on our Discord.
+          </p>
+          <div class="contact-actions">
+            <a href="https://discord.com" target="_blank" rel="noopener" class="ep-btn ep-btn--glow">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+              <span>Join Discord</span>
+            </a>
+            <a href="mailto:contact@editportal.net" class="ep-btn ep-btn--glass">
+              <span>Send Feedback</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Global Footer -->
+    <footer class="main-footer">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <div class="nav-brand">
+            <span class="brand-text">EDIT<span class="brand-glow">PORTAL</span></span>
+          </div>
+          <p class="footer-copy font-mono">
+            &copy; 2026 Edit Portal. 100% Client-Side Video & Audio Utilities. All trademarks belong to their respective owners.
+          </p>
+        </div>
+        <div class="footer-links">
+          <a href="/privacy" class="footer-link">Privacy Policy</a>
+          <a href="/terms" class="footer-link">Terms of Service</a>
+          <a href="/beat-marker" class="footer-link">Beat Marker</a>
+          <a href="/audio-studio" class="footer-link">Audio Studio</a>
+          <a href="/quality-boost" class="footer-link">Quality Boost</a>
+          <a href="/slow-mo" class="footer-link">Smooth Slow-Mo</a>
+          <a href="/ae-converter" class="footer-link">AE Converter</a>
+          <a href="/expressions" class="footer-link">Expressions</a>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+
+  <!-- ========================================================================= -->
+  <!-- 2. TOOL 1 VIEW: BEAT MARKER (<section id="app">)                           -->
+  <!-- ========================================================================= -->
+  <section id="app" class="spa-view tool-view hidden">
+    <!-- Tool Top Bar -->
+    <header class="tool-topbar">
+      <div class="tool-topbar-left">
+        <button class="back-home ep-btn ep-btn--icon" title="Return to Home">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <span>Exit to Portal</span>
+        </button>
+        <div class="tool-breadcrumb font-mono">
+          <span class="text-muted">EDIT PORTAL /</span>
+          <span class="text-purple">BEAT MARKER</span>
+        </div>
+      </div>
+      <div class="tool-topbar-right font-mono">
+        <span class="tool-badge">100% LOCAL DSP</span>
+      </div>
+    </header>
+
+    <div class="tool-body">
+      <!-- Upload Drop Zone (shown initially) -->
+      <div id="dropZone" class="tool-dropzone">
+        <div class="drop-content">
+          <div class="drop-icon-ring">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+          </div>
+          <h2 class="drop-title">Drop your track or edit here</h2>
+          <p class="drop-subtitle">Supports MP3, WAV, M4A, AAC, MP4, MOV &bull; Decoded directly in browser</p>
+          <div class="drop-actions">
+            <button id="pickBtn" class="ep-btn ep-btn--hero ep-btn--glow">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              <span>Choose File</span>
+            </button>
+            <input type="file" id="fileInput" accept="audio/*,video/mp4,video/quicktime" class="hidden-input" />
+          </div>
+          <p class="drop-note font-mono">Tip: You can also tap 'T' to beat-match live while playing</p>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loading" class="tool-loader hidden">
+        <div class="spinner-ring"></div>
+        <div id="loadingText" class="loading-label font-mono">DECODING AUDIO SAMPLES...</div>
+      </div>
+
+      <!-- Interactive Editor (revealed once file is loaded) -->
+      <div id="editor" class="beat-editor hidden">
+
+        <!-- Top Parameter Bar -->
+        <div class="editor-header">
+          <div class="eh-group">
+            <label for="sensSlider" class="eh-label font-mono">SENSITIVITY <span id="sensVal" class="text-neon-pink">30</span></label>
+            <input type="range" id="sensSlider" min="0" max="100" value="30" class="ep-slider" />
+          </div>
+
+          <div class="eh-group font-mono">
+            <span class="eh-label">BPM DETECTED</span>
+            <span id="bpmVal" class="eh-stat text-neon-cyan">---</span>
+          </div>
+
+          <div class="eh-group font-mono">
+            <span class="eh-label">TOTAL BEATS</span>
+            <span id="beatCount" class="eh-stat text-neon-green">0</span>
+          </div>
+
+          <div class="eh-group">
+            <span class="eh-label font-mono">QUANTIZE FPS</span>
+            <div id="fpsGroup" class="ep-btn-group font-mono">
+              <button class="fps-btn is-active" data-fps="24">24</button>
+              <button class="fps-btn" data-fps="25">25</button>
+              <button class="fps-btn" data-fps="30">30</button>
+              <button class="fps-btn" data-fps="60">60</button>
+            </div>
+          </div>
+
+          <div class="eh-group">
+            <label for="offsetSlider" class="eh-label font-mono">SYNC OFFSET <span id="offsetVal" class="text-neon-cyan">0ms</span></label>
+            <input type="range" id="offsetSlider" min="-100" max="100" value="0" class="ep-slider" />
+          </div>
+
+          <div class="eh-group eh-zoom-group">
+            <span class="eh-label font-mono">ZOOM</span>
+            <div class="ep-btn-group">
+              <button id="zoomOutBtn" class="ep-btn ep-btn--xs ep-btn--glass" title="Zoom Out (-)">-</button>
+              <button id="zoomFitBtn" class="ep-btn ep-btn--xs ep-btn--glass" title="Fit to View">Fit</button>
+              <button id="zoomInBtn" class="ep-btn ep-btn--xs ep-btn--glass" title="Zoom In (+)">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Waveform Stage -->
+        <div class="waveform-stage">
+          <!-- Main Waveform Canvas -->
+          <div class="waveform-canvas-wrap">
+            <canvas id="waveform" class="waveform-canvas"></canvas>
+            <div class="stage-cue-hint font-mono">
+              <span>Drag horizontal line: Threshold</span>
+              <span>Click empty: +Manual Marker</span>
+              <span>Click marker: Delete</span>
+            </div>
+          </div>
+
+          <!-- Minimap Navigator / Scrubber -->
+          <div id="seek" class="minimap-track" title="Click or drag to navigate track">
+            <canvas id="seekCanvas" class="minimap-canvas"></canvas>
+            <div id="seekFill" class="minimap-fill"></div>
+            <div id="seekView" class="minimap-view"></div>
+            <div id="seekHead" class="minimap-head"></div>
+          </div>
+        </div>
+
+        <!-- Transport & Actions Bar -->
+        <div class="editor-footer">
+          <div class="ef-left">
+            <button id="playBtn" class="ep-btn ep-btn--hero ep-btn--glow ep-btn--sm">
+              <svg class="ic-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20"></polygon></svg>
+              <svg class="ic-pause hidden" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+              <span class="play-txt">Play</span>
+            </button>
+            <div class="ef-time font-mono">
+              <span id="curTime" class="text-neon-cyan">00:00.00</span>
+              <span class="text-muted">/</span>
+              <span id="durTime">00:00.00</span>
+            </div>
+            <label class="metronome-toggle font-mono">
+              <input type="checkbox" id="clickToggle" checked />
+              <span class="toggle-box"></span>
+              <span>Metronome Click</span>
+            </label>
+          </div>
+
+          <div class="ef-center">
+            <button id="addBtn" class="ep-btn ep-btn--glass ep-btn--sm" title="Add manual marker at current time (T)">
+              <span>+ Marker (T)</span>
+            </button>
+            <button id="fillBtn" class="ep-btn ep-btn--glass ep-btn--sm" title="Calculate tempo from manual taps and autofill remaining bars">
+              <span>Fill from taps</span>
+            </button>
+            <button id="redetectBtn" class="ep-btn ep-btn--glass ep-btn--sm" title="Re-run onset algorithm">
+              <span>Re-detect</span>
+            </button>
+            <button id="clearBtn" class="ep-btn ep-btn--glass ep-btn--sm text-rose" title="Remove all markers">
+              <span>Clear all</span>
+            </button>
+          </div>
+
+          <div class="ef-right">
+            <div class="marker-legend font-mono">
+              <span class="lg-auto">&bull; Auto Onset</span>
+              <span class="lg-manual">&bull; Manual Tap</span>
+            </div>
+            <button id="exportTxtBtn" class="ep-btn ep-btn--glass ep-btn--sm" title="Export marker list as After Effects .txt file">
+              <span>Export .txt</span>
+            </button>
+            <button id="exportWavBtn" class="ep-btn ep-btn--glow ep-btn--sm" title="Export 16-bit PCM WAV with embedded Adobe XMP cue markers">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <span>Export WAV (with Markers)</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ========================================================================= -->
+  <!-- 3. TOOL 2 VIEW: AUDIO STUDIO (<section id="audio-studio">)                -->
+  <!-- ========================================================================= -->
+  <section id="audio-studio" class="spa-view tool-view hidden">
+    <header class="tool-topbar">
+      <div class="tool-topbar-left">
+        <button class="back-home ep-btn ep-btn--icon" title="Return to Home">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <span>Exit to Portal</span>
+        </button>
+        <div class="tool-breadcrumb font-mono">
+          <span class="text-muted">EDIT PORTAL /</span>
+          <span class="text-pink">AUDIO STUDIO</span>
+        </div>
+      </div>
+      <div class="tool-topbar-right font-mono">
+        <span class="tool-badge">REAL-TIME WEB AUDIO DSP</span>
+      </div>
+    </header>
+
+    <div class="studio-body">
+      <!-- Background Reactive Visualizer -->
+      <canvas id="studioBg" class="studio-bg-canvas"></canvas>
+
+      <div class="studio-container">
+        <!-- Drop Area / Upload -->
+        <div id="studioDrop" class="studio-drop-strip">
+          <div class="sds-left">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+            <span id="studioFileName" class="font-mono">NO FILE LOADED — DROP AUDIO OR CLICK LOAD</span>
+          </div>
+          <button id="studioPickBtn" class="ep-btn ep-btn--sm ep-btn--glass">Load Audio</button>
+          <input type="file" id="studioInput" accept="audio/*" class="hidden-input" />
+        </div>
+
+        <!-- Presets Bar -->
+        <div class="studio-presets">
+          <span class="sp-label font-mono">PRESETS:</span>
+          <div class="studio-chips">
+            <button class="studio-chip is-active" data-preset="original">Original</button>
+            <button class="studio-chip" data-preset="spedup">Sped Up (1.22x)</button>
+            <button class="studio-chip" data-preset="slowed">Slowed + Reverb (0.84x)</button>
+            <button class="studio-chip" data-preset="nightcore">Nightcore (1.32x)</button>
+            <button class="studio-chip" data-preset="bass">Bass Boosted (+9dB)</button>
+          </div>
+        </div>
+
+        <!-- Waveform Stage with Trim Handles -->
+        <div class="studio-wave-card">
+          <div class="swc-header font-mono">
+            <div>START: <span id="studioStart" class="text-neon-cyan">00:00.00</span></div>
+            <div>END: <span id="studioEnd" class="text-neon-pink">00:00.00</span></div>
+            <div>EST. OUTPUT: <span id="studioOut" class="text-neon-green">00:00.00</span></div>
+          </div>
+          
+          <div class="studio-canvas-wrap">
+            <canvas id="studioCanvas" class="studio-canvas"></canvas>
+          </div>
+
+          <div class="swc-footer">
+            <div class="swc-controls">
+              <button id="studioPlay" class="ep-btn ep-btn--hero ep-btn--glow ep-btn--sm">
+                <svg class="ic-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20"></polygon></svg>
+                <svg class="ic-pause hidden" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                <span class="studio-play-txt">Play</span>
+              </button>
+              <span id="studioCurTime" class="font-mono text-neon-cyan">00:00.00</span>
+              <button id="studioFullBtn" class="ep-btn ep-btn--xs ep-btn--glass font-mono">Select all</button>
+              <label class="metronome-toggle font-mono">
+                <input type="checkbox" id="studioLoop" checked />
+                <span class="toggle-box"></span>
+                <span>Loop Region</span>
+              </label>
+            </div>
+            <div class="swc-hint font-mono text-muted">
+              Drag left/right orange borders to trim audio
+            </div>
+          </div>
+        </div>
+
+        <!-- DSP Knobs & Sliders -->
+        <div class="studio-params-grid">
+          <!-- Speed / Pitch Slider -->
+          <div class="param-card">
+            <div class="param-head font-mono">
+              <span>SPEED / PITCH</span>
+              <span id="studioSpeedVal" class="text-magenta">1.00x</span>
+            </div>
+            <input type="range" id="studioSpeed" min="0.5" max="2.0" step="0.01" value="1.0" class="ep-slider" />
+            <div class="param-scale font-mono"><span>0.5x</span><span>1.0x</span><span>2.0x</span></div>
+          </div>
+
+          <!-- Bass Boost (90Hz Lowshelf) -->
+          <div class="param-card">
+            <div class="param-head font-mono">
+              <span>BASS BOOST (90Hz)</span>
+              <span id="studioBassVal" class="text-neon-cyan">0 dB</span>
+            </div>
+            <input type="range" id="studioBass" min="0" max="12" step="0.5" value="0" class="ep-slider" />
+            <div class="param-scale font-mono"><span>0 dB</span><span>+6 dB</span><span>+12 dB</span></div>
+          </div>
+
+          <!-- Reverb Level -->
+          <div class="param-card">
+            <div class="param-head font-mono">
+              <span>STEREO CONVOLUTION REVERB</span>
+              <span id="studioReverbVal" class="text-purple">0%</span>
+            </div>
+            <input type="range" id="studioReverb" min="0" max="100" step="1" value="0" class="ep-slider" />
+            <div class="param-scale font-mono"><span>Dry (0%)</span><span>50%</span><span>Wet (100%)</span></div>
+          </div>
+
+          <!-- Fade In / Out -->
+          <div class="param-card">
+            <div class="param-head font-mono">
+              <span>FADE IN / OUT</span>
+              <span class="text-muted"><span id="studioFadeInVal">0.0</span>s / <span id="studioFadeOutVal">0.0</span>s</span>
+            </div>
+            <div class="fades-row">
+              <input type="range" id="studioFadeIn" min="0" max="5" step="0.1" value="0" class="ep-slider" title="Fade In Duration" />
+              <input type="range" id="studioFadeOut" min="0" max="5" step="0.1" value="0" class="ep-slider" title="Fade Out Duration" />
+            </div>
+            <div class="param-scale font-mono"><span>Fade In</span><span>Fade Out</span></div>
+          </div>
+        </div>
+
+        <p id="studioNote" class="studio-info-note font-mono">
+          ℹ️ Speed also shifts pitch naturally to reproduce classic TikTok / SoundCloud edit aesthetics.
+        </p>
+
+        <!-- Export & Workflow Handoff -->
+        <div class="studio-actions-bar">
+          <button id="studioExportBtn" class="ep-btn ep-btn--hero ep-btn--glow">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span>Download Master WAV</span>
+          </button>
+          
+          <button id="studioSendBtn" class="ep-btn ep-btn--glass">
+            <span>Send to Beat Marker &rarr;</span>
+          </button>
+        </div>
+
+        <div id="studioShare" class="studio-share-banner hidden">
+          <span class="font-mono text-neon-green">✓ Audio exported successfully! Ready for your video edit.</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ========================================================================= -->
+  <!-- 4. TOOL 3 VIEW: QUALITY BOOST (<section id="quality-boost">)              -->
+  <!-- ========================================================================= -->
+  <section id="quality-boost" class="spa-view tool-view hidden">
+    <header class="tool-topbar">
+      <div class="tool-topbar-left">
+        <button class="back-home ep-btn ep-btn--icon" title="Return to Home">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <span>Exit to Portal</span>
+        </button>
+        <div class="tool-breadcrumb font-mono">
+          <span class="text-muted">EDIT PORTAL /</span>
+          <span class="text-neon-pink">QUALITY BOOST</span>
+        </div>
+      </div>
+      <div class="tool-topbar-right font-mono">
+        <span class="tool-badge">WEBGL2 HARDWARE ACCELERATED</span>
+      </div>
+    </header>
+
+    <div class="qb-body">
+      <!-- Media Loader Strip -->
+      <div id="qbDrop" class="qb-drop-strip">
+        <div class="qb-drop-left">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+          <div>
+            <span id="qbFileName" class="font-mono">NO FILE LOADED — DROP VIDEO OR STILL</span>
+            <span id="qbFileMeta" class="qb-meta font-mono text-muted">Supports MP4, MOV, PNG, JPG, WEBP</span>
+          </div>
+        </div>
+        <button id="qbPickBtn" class="ep-btn ep-btn--sm ep-btn--glass">Select Media</button>
+        <input type="file" id="qbInput" accept="video/mp4,video/quicktime,image/*" class="hidden-input" />
+      </div>
+
+      <!-- Main Dual Stage / Comparison -->
+      <div class="qb-layout">
+        <div class="qb-stage-col">
+          <div id="qbStage" class="qb-viewport">
+            <canvas id="qbCanvas" class="qb-canvas"></canvas>
+            
+            <!-- Video scrubber controls (only visible if video) -->
+            <div class="qb-vid-only qb-vid-controls hidden">
+              <button id="qbPlay" class="mon-btn" title="Play / Pause">
+                <svg class="ic-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20"></polygon></svg>
+                <svg class="ic-pause hidden" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+              </button>
+              <input type="range" id="qbSeek" min="0" max="100" value="0" class="ep-slider" />
+              <span id="qbTime" class="font-mono text-neon-cyan">00:00</span>
+            </div>
+
+            <!-- Viewport Tools Overlays -->
+            <div class="qb-overlay-top">
+              <div class="qb-tags font-mono">
+                <span class="tag-before">BEFORE</span>
+                <span class="tag-split">|</span>
+                <span class="tag-after">AFTER (ENHANCED)</span>
+              </div>
+              <div class="qb-view-actions">
+                <label class="qb-check-btn font-mono">
+                  <input type="checkbox" id="qbCompare" checked />
+                  <span>Split View</span>
+                </label>
+                <button id="qbZoom" class="ep-btn ep-btn--xs ep-btn--glass font-mono">100% Zoom</button>
+              </div>
+            </div>
+
+            <!-- Busy Calculation Indicator -->
+            <div id="qbBusy" class="qb-busy hidden">
+              <div class="spinner-ring"></div>
+              <span class="font-mono">UPDATING SHADER TILE...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side Parameter Tuning Panel -->
+        <div class="qb-sidebar">
+          <!-- Upscaling Mode -->
+          <div class="qb-panel-block">
+            <span class="qb-section-lbl font-mono">UPSCALING PIPELINE</span>
+            <div class="qb-modes">
+              <button class="qb-mode-btn is-active" data-mode="classic">
+                <strong>Classic</strong>
+                <small>CAS + Lanczos</small>
+              </button>
+              <button class="qb-mode-btn" data-mode="fast">
+                <strong>Fast</strong>
+                <small>Edge Reconstruct</small>
+              </button>
+              <button class="qb-mode-btn" data-mode="pro">
+                <strong>Pro</strong>
+                <small>Multi-scale Deep</small>
+              </button>
+            </div>
+          </div>
+
+          <!-- Content Tuning (Anime / Real Life / 3D) -->
+          <div class="qb-panel-block">
+            <span class="qb-section-lbl font-mono">FOOTAGE OPTIMIZATION</span>
+            <div class="qb-chips font-mono">
+              <button class="qb-chip is-active" data-footage="rl">Real Life</button>
+              <button class="qb-chip" data-footage="an">Anime / 2D Lineart</button>
+              <button class="qb-chip" data-footage="3d">3D Render / CGI</button>
+            </div>
+            <div class="qb-pro-opt hidden">
+              <span class="qb-sub-lbl font-mono">PRO COMPUTATION LEVEL:</span>
+              <div class="qb-chips font-mono">
+                <button class="qb-subchip is-active" data-prospeed="best">Best Quality</button>
+                <button class="qb-subchip" data-prospeed="faster">Faster Preview</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Look Presets -->
+          <div class="qb-panel-block">
+            <span class="qb-section-lbl font-mono">COLOR & RESTORATION LOOK</span>
+            <div class="qb-looks font-mono">
+              <button class="qb-look-btn is-active" data-look="clean">Clean</button>
+              <button class="qb-look-btn" data-look="crisp">Crisp</button>
+              <button class="qb-look-btn" data-look="vivid">Vivid</button>
+              <button class="qb-look-btn" data-look="off">Natural</button>
+            </div>
+          </div>
+
+          <!-- Fine-tune Sliders -->
+          <div class="qb-panel-block">
+            <span class="qb-section-lbl font-mono">FINE-TUNE SHADERS</span>
+            
+            <div class="qb-slider-row">
+              <label class="font-mono"><span>DENOISE (BILATERAL)</span> <span id="qbDenoiseVal">55</span></label>
+              <input type="range" id="qbDenoise" min="0" max="100" value="55" class="ep-slider" />
+            </div>
+
+            <div class="qb-slider-row">
+              <label class="font-mono"><span>SHARPEN (CAS)</span> <span id="qbSharpenVal">45</span></label>
+              <input type="range" id="qbSharpen" min="0" max="100" value="45" class="ep-slider" />
+            </div>
+
+            <div class="qb-slider-row">
+              <label class="font-mono"><span>LOCAL CONTRAST</span> <span id="qbContrastVal">+4</span></label>
+              <input type="range" id="qbContrast" min="-20" max="40" value="4" class="ep-slider" />
+            </div>
+
+            <div class="qb-slider-row">
+              <label class="font-mono"><span>VIBRANCE</span> <span id="qbVibranceVal">+5</span></label>
+              <input type="range" id="qbVibrance" min="-20" max="50" value="5" class="ep-slider" />
+            </div>
+          </div>
+
+          <!-- Target Resolution -->
+          <div class="qb-panel-block">
+            <span class="qb-section-lbl font-mono">TARGET RESOLUTION</span>
+            <div id="qbRes" class="qb-res-chips font-mono">
+              <button class="qb-res-btn" data-scale="1">1080p (Native)</button>
+              <button class="qb-res-btn is-active" data-scale="1.33">1440p (2K)</button>
+              <button class="qb-res-btn" data-scale="2">2160p (4K UHD)</button>
+            </div>
+            <div class="qb-est-box font-mono">
+              <div>TARGET: <span id="qbOut" class="text-neon-cyan">1440 x 2560</span></div>
+              <div>STIMATED: <span id="qbEst" class="text-neon-green">~60 FPS Real-time</span></div>
+            </div>
+          </div>
+
+          <!-- Export Action -->
+          <button id="qbExport" class="ep-btn ep-btn--hero ep-btn--glow ep-btn--full">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            <span>Enhance & Export Media</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Render Progress Modal / Overlay -->
+      <div id="qbRender" class="qb-render-modal hidden">
+        <div class="qb-render-box">
+          <div class="qb-render-preview">
+            <div id="qbThumb" class="qb-render-thumb">
+              <canvas id="qbThumbCanvas"></canvas>
+              <div class="qb-render-scan"></div>
+            </div>
+          </div>
+          <div class="qb-render-info">
+            <h3 class="font-display">PROCESSING FRAMES...</h3>
+            <div class="qb-progress-track">
+              <div id="qbBar" class="qb-progress-fill"></div>
+            </div>
+            <div class="qb-render-stats font-mono">
+              <div>PROGRESS: <span id="qbPct" class="text-neon-pink">0%</span></div>
+              <div>FRAME: <span id="qbFrames" class="text-neon-cyan">0 / 0</span></div>
+              <div>ELAPSED: <span id="qbElapsed">00:00</span></div>
+              <div>REMAINING: <span id="qbLeft">00:00</span></div>
+            </div>
+            <button id="qbCancel" class="ep-btn ep-btn--sm ep-btn--glass">Cancel Processing</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Render Complete Overlay -->
+      <div id="qbDone" class="qb-done-modal hidden">
+        <div class="qb-done-box">
+          <div class="qb-done-icon">✓</div>
+          <h2 class="font-display">ENHANCEMENT COMPLETE</h2>
+          <p class="font-mono text-neon-green">Media successfully processed at full target resolution!</p>
+          <div class="qb-done-actions">
+            <button id="qbSaveAgain" class="ep-btn ep-btn--hero ep-btn--glow">Download File</button>
+            <button id="qbSavePhotos" class="ep-btn ep-btn--glass">Save Copy</button>
+            <button id="qbAnother" class="ep-btn ep-btn--glass">Enhance Another</button>
+            <button id="qbBack" class="ep-btn ep-btn--glass">Back to Editor</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================================= -->
+  <!-- 4B. TOOL: SMOOTH SLOW-MO (<section id="slow-mo">)                         -->
+  <!-- ========================================================================= -->
+  <section id="slow-mo" class="spa-view tool-view hidden">
+    <header class="tool-topbar">
+      <div class="tool-topbar-left">
+        <button class="back-home ep-btn ep-btn--icon" title="Return to Home">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <span>Exit to Portal</span>
+        </button>
+        <div class="tool-breadcrumb font-mono">
+          <span class="text-muted">EDIT PORTAL /</span>
+          <span class="text-neon-cyan">SMOOTH SLOW-MO</span>
+        </div>
+      </div>
+      <div class="tool-topbar-right font-mono">
+        <span class="tool-badge">60 FPS OPTICAL FLOW INTERPOLATION</span>
+      </div>
+    </header>
+
+    <div class="tool-body">
+      <!-- Media Drop Strip -->
+      <div id="smDrop" class="tool-dropzone">
+        <div class="drop-content">
+          <div class="drop-icon-ring" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          </div>
+          <h2 class="drop-title">Drop your clip here for Smooth Slow-Mo</h2>
+          <p class="drop-subtitle">Turn 24/30 FPS clips into fluid 60 FPS slow motion &bull; 100% in browser, zero server upload</p>
+          <div class="drop-actions">
+            <button id="smPickBtn" class="ep-btn ep-btn--hero ep-btn--glow">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              <span>Choose Video Clip</span>
+            </button>
+            <input type="file" id="smInput" accept="video/mp4,video/quicktime,video/webm" class="hidden-input" />
+          </div>
+          <p class="drop-note font-mono">Supports MP4, MOV, WEBM &bull; Optical Flow Temporal Motion Compensation</p>
+        </div>
+      </div>
+
+      <!-- Main Slow-Mo Workspace -->
+      <div id="smEditor" class="qb-layout hidden">
+        <div class="qb-stage-col">
+          <div class="qb-drop-strip" style="margin-bottom: 1rem;">
+            <div class="qb-drop-left">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <div>
+                <span id="smFileName" class="font-mono text-neon-cyan">clip.mp4</span>
+                <span id="smFileMeta" class="qb-meta font-mono text-muted">1920 x 1080 &bull; 30 FPS</span>
+              </div>
+            </div>
+            <button class="ep-btn ep-btn--sm ep-btn--glass" onclick="document.getElementById('smInput').click()">Change Video</button>
+          </div>
+
+          <div class="qb-viewport">
+            <canvas id="smCanvas" class="qb-canvas"></canvas>
+
+            <div class="qb-vid-controls">
+              <button id="smPlay" class="mon-btn" title="Play / Pause">
+                <svg class="ic-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20"></polygon></svg>
+                <svg class="ic-pause hidden" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+              </button>
+              <input type="range" id="smSeek" min="0" max="100" value="0" class="ep-slider" />
+              <div class="font-mono text-neon-cyan" style="font-size: 0.8rem; display: flex; gap: 0.5rem;">
+                <span id="smCurTime">00:00.00</span>
+                <span>/</span>
+                <span id="smDurTime" class="text-muted">00:00.00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controls Sidebar -->
+        <div class="qb-sidebar">
+          <!-- Slow Speed Presets -->
+          <div class="qb-panel-block">
+            <span class="qb-section-lbl font-mono">SLOW MOTION SPEED</span>
+            <div class="qb-chips font-mono">
+              <button class="qb-chip sm-speed-chip" data-speed="0.10">0.10x (Ultra 10x)</button>
+              <button class="qb-chip sm-speed-chip is-active" data-speed="0.25">0.25x (Smooth 4x)</button>
+              <button class="qb-chip sm-speed-chip" data-speed="0.50">0.50x (Half Speed 2x)</button>
+              <button class="qb-chip sm-speed-chip" data-speed="0.75">0.75x (Mild)</button>
+            </div>
+            <div style="margin-top: 1rem;">
+              <div class="flex-between font-mono text-muted" style="font-size: 0.75rem; margin-bottom: 0.35rem;">
+                <span>CUSTOM SPEED</span>
+                <span id="smSpeedVal" class="text-neon-cyan">0.25x</span>
+              </div>
+              <input type="range" id="smSpeedSlider" min="0.05" max="1.0" step="0.01" value="0.25" class="ep-slider" />
+            </div>
+          </div>
+
+          <!-- Target Frame Rate -->
+          <div class="qb-panel-block">
+            <span class="qb-section-lbl font-mono">TARGET FRAME RATE (INTERPOLATED)</span>
+            <div class="qb-chips font-mono">
+              <button class="qb-chip sm-fps-chip" data-fps="30">30 FPS Standard</button>
+              <button class="qb-chip sm-fps-chip is-active" data-fps="60">60 FPS Fluid High-Frame</button>
+            </div>
+            <p class="font-mono text-muted" style="font-size: 0.72rem; margin-top: 0.5rem; line-height: 1.4;">
+              Generates sub-frame motion vectors to eliminate frame stuttering on low FPS clips.
+            </p>
+          </div>
+
+          <!-- Action Button -->
+          <div class="qb-panel-block">
+            <button id="smExportBtn" class="ep-btn ep-btn--hero ep-btn--glow" style="width: 100%;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <span>Export Smooth Slow-Mo</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Export Modal -->
+      <div id="smExportModal" class="qb-render-modal hidden">
+        <div class="qb-render-box">
+          <div class="qb-render-info" style="width: 100%;">
+            <h3 class="font-display">GENERATING INTERPOLATED 60 FPS FRAMES...</h3>
+            <div class="qb-progress-track">
+              <div id="smExportBar" class="qb-progress-fill" style="background: linear-gradient(90deg, #38bdf8, #818cf8);"></div>
+            </div>
+            <div class="qb-render-stats font-mono">
+              <div>PROGRESS: <span id="smExportPct" class="text-neon-cyan">0%</span></div>
+              <div>RATE: <span>60 FPS Motion-Blended</span></div>
+            </div>
+            <button id="smCancelExport" class="ep-btn ep-btn--sm ep-btn--glass">Cancel Processing</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Done Modal -->
+      <div id="smDoneModal" class="qb-done-modal hidden">
+        <div class="qb-done-box">
+          <div class="qb-done-icon" style="color: #38bdf8; border-color: rgba(56, 189, 248, 0.4);">✓</div>
+          <h2 class="font-display">SLOW MOTION COMPLETE</h2>
+          <p class="font-mono text-neon-cyan">Fluid 60 FPS slow-motion clip synthesized successfully!</p>
+          <div class="qb-done-actions">
+            <button id="smDownloadBtn" class="ep-btn ep-btn--hero ep-btn--glow">Download Video</button>
+            <button id="smBackBtn" class="ep-btn ep-btn--glass">Back to Editor</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================================= -->
+  <!-- 5. TOOL 4 VIEW: AE FILE CONVERTER (<section id="aep">)                    -->
+  <!-- ========================================================================= -->
+  <section id="aep" class="spa-view tool-view hidden">
+    <header class="tool-topbar">
+      <div class="tool-topbar-left">
+        <button class="back-home ep-btn ep-btn--icon" title="Return to Home">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <span>Exit to Portal</span>
+        </button>
+        <div class="tool-breadcrumb font-mono">
+          <span class="text-muted">EDIT PORTAL /</span>
+          <span class="text-blue">AE FILE CONVERTER</span>
+        </div>
+      </div>
+      <div class="tool-topbar-right font-mono">
+        <span class="tool-badge">BINARY RIFX CHUNK PATCHER</span>
+      </div>
+    </header>
+
+    <div class="aep-body">
+      <div class="aep-card">
+        <div class="aep-header">
+          <div class="aep-glyph">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          </div>
+          <h2 class="aep-title font-display">AFTER EFFECTS VERSION DOWNGRADER</h2>
+          <p class="aep-subtitle">Open project files (<span class="font-mono">.aep</span>) and presets (<span class="font-mono">.ffx</span>) created in AE 2025/2024 inside older versions without installing anything.</p>
+        </div>
+
+        <!-- Drop Zone -->
+        <div id="aepDrop" class="aep-dropzone">
+          <div class="aep-drop-inner">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path></svg>
+            <p class="aep-drop-txt font-mono">Drop your .aep or .ffx file here</p>
+            <button id="aepPickBtn" class="ep-btn ep-btn--sm ep-btn--glow">Select Project File</button>
+            <input type="file" id="aepInput" accept=".aep,.ffx,.aepx" class="hidden-input" />
+          </div>
+        </div>
+
+        <!-- Conversion Form (revealed once file parsed) -->
+        <div id="aepResult" class="aep-result-panel hidden">
+          <div class="aep-info-grid font-mono">
+            <div class="aep-info-row">
+              <span class="text-muted">FILE NAME:</span>
+              <span id="aepFileName" class="text-neon-cyan">project.aep</span>
+            </div>
+            <div class="aep-info-row">
+              <span class="text-muted">FILE SIZE:</span>
+              <span id="aepFileSize">0 MB</span>
+            </div>
+            <div class="aep-info-row">
+              <span class="text-muted">DETECTED VERSION:</span>
+              <span id="aepDetected" class="text-neon-pink">After Effects 2024 (v24.0)</span>
+            </div>
+          </div>
+
+          <div class="aep-target-group">
+            <label for="aepTarget" class="font-mono aep-target-lbl">SELECT TARGET AFTER EFFECTS VERSION:</label>
+            <select id="aepTarget" class="ep-select font-mono">
+              <option value="24.0">After Effects 2024 (v24.0)</option>
+              <option value="23.0">After Effects 2023 (v23.0)</option>
+              <option value="22.0">After Effects 2022 (v22.0)</option>
+              <option value="18.0">After Effects 2021 (v18.0)</option>
+              <option value="17.0" selected>After Effects 2020 (v17.0)</option>
+              <option value="16.0">After Effects CC 2019 (v16.0)</option>
+              <option value="15.0">After Effects CC 2018 (v15.0)</option>
+            </select>
+          </div>
+
+          <button id="aepConvertBtn" class="ep-btn ep-btn--hero ep-btn--glow ep-btn--full">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span>Convert & Download Patched AEP</span>
+          </button>
+
+          <div id="aepNote" class="aep-note-box font-mono">
+            ℹ️ Patches RIFX chunk version bytes in-place. Composition hierarchy, keyframes, plugins, and expressions are 100% preserved.
+          </div>
+        </div>
+
+        <div id="aepError" class="aep-error-box font-mono hidden"></div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ========================================================================= -->
+  <!-- 6. TOOL 5 VIEW: EXPRESSION GENERATOR (<section id="expressions">)         -->
+  <!-- ========================================================================= -->
+  <section id="expressions" class="spa-view tool-view hidden">
+    <header class="tool-topbar">
+      <div class="tool-topbar-left">
+        <button class="back-home ep-btn ep-btn--icon" title="Return to Home">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <span>Exit to Portal</span>
+        </button>
+        <div class="tool-breadcrumb font-mono">
+          <span class="text-muted">EDIT PORTAL /</span>
+          <span class="text-purple">EXPRESSION GENERATOR</span>
+        </div>
+      </div>
+      <div class="tool-topbar-right font-mono">
+        <span class="tool-badge">LIVE 60FPS SIMULATION</span>
+      </div>
+    </header>
+
+    <div class="expr-body">
+      <!-- Search & Category Filters -->
+      <div class="expr-top-controls">
+        <div class="expr-search-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" id="exprSearch" placeholder="Search expressions (e.g. bounce, wiggle, loop, fade, counter)..." class="ep-input font-mono" />
+        </div>
+        <div class="expr-cat-chips font-mono">
+          <button class="expr-cat is-active" data-cat="all">All (10)</button>
+          <button class="expr-cat" data-cat="Motion">Motion</button>
+          <button class="expr-cat" data-cat="Loop">Loop</button>
+          <button class="expr-cat" data-cat="Opacity">Opacity</button>
+          <button class="expr-cat" data-cat="Text">Text</button>
+          <button class="expr-cat" data-cat="Style">Style</button>
+        </div>
+      </div>
+
+      <div class="expr-layout">
+        <!-- Left: Expression List -->
+        <div class="expr-list-col">
+          <div id="exprList" class="expr-cards-list"></div>
+        </div>
+
+        <!-- Right: Live Canvas Preview, Sliders & Code Box -->
+        <div class="expr-detail-col">
+          <div id="exprDetail" class="expr-detail-card">
+            
+            <div class="expr-detail-header">
+              <div>
+                <span id="exprBadge" class="expr-cat-badge font-mono">Motion</span>
+                <h2 id="exprTitle" class="expr-name font-display">Inertial Bounce</h2>
+                <p id="exprDesc" class="expr-summary">Creates an elastic, organic bounce overshoot when keyframes stop.</p>
+              </div>
+              <div id="exprProperties" class="expr-props-badges font-mono">
+                <!-- Badges populated dynamically -->
+              </div>
+            </div>
+
+            <!-- 60 FPS Visual Canvas Preview -->
+            <div class="expr-preview-stage">
+              <canvas id="exprCanvas" class="expr-canvas"></canvas>
+              <div class="expr-preview-meta font-mono">
+                <span>SIMULATION SPEED: 60 FPS</span>
+                <span>MATH ENGINE: ExtendScript / JS</span>
+              </div>
+            </div>
+
+            <!-- Dynamic Sliders -->
+            <div class="expr-controls-section">
+              <span class="expr-subhead font-mono">TWEAK EXPRESSION PARAMETERS:</span>
+              <div id="exprControls" class="expr-sliders-grid">
+                <!-- Dynamically generated sliders -->
+              </div>
+            </div>
+
+            <!-- Code Output & Copy -->
+            <div class="expr-code-section">
+              <div class="expr-code-header font-mono">
+                <span>AFTER EFFECTS EXPRESSION CODE:</span>
+                <button id="exprCopyBtn" class="ep-btn ep-btn--xs ep-btn--glow">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span>Copy Expression</span>
+                </button>
+              </div>
+              <pre class="expr-code-box"><code id="exprCode"></code></pre>
+              <p class="expr-tip font-mono">
+                💡 How to apply: In After Effects, <strong>Alt + Click</strong> (Option + Click on Mac) on the stopwatch of your target property and paste this code.
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ========================================================================= -->
+  <!-- 7. LEGAL & STATIC VIEWS: PRIVACY, TERMS, NOT FOUND                        -->
+  <!-- ========================================================================= -->
+  
+  <!-- Privacy Policy -->
+  <section id="privacy" class="spa-view static-view hidden">
+    <div class="static-container">
+      <button class="back-home ep-btn ep-btn--icon mb-4">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        <span>Back to Edit Portal</span>
+      </button>
+      <h1 class="static-title font-display">PRIVACY POLICY</h1>
+      <p class="static-date font-mono">Last updated: October 2026</p>
+
+      <div class="static-body">
+        <h3>1. The Zero-Upload Architecture</h3>
+        <p>Edit Portal is engineered strictly as a client-side web application. When you drop audio tracks, video files, or After Effects project files into any tool (Beat Marker, Audio Studio, Quality Boost, AE Converter, Expression Generator), <strong>your media files never leave your computer</strong>.</p>
+        
+        <h3>2. Local Storage and Preferences</h3>
+        <p>We do not use tracking cookies or advertising telemetry. We only store simple UI preferences (such as your consent banner acknowledgment) in your browser's local storage.</p>
+
+        <h3>3. Data Security</h3>
+        <p>Because no media or project data is uploaded to any server, there is zero threat of unauthorized access, cloud leaks, or copyright monitoring on our end.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Terms of Service -->
+  <section id="terms" class="spa-view static-view hidden">
+    <div class="static-container">
+      <button class="back-home ep-btn ep-btn--icon mb-4">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        <span>Back to Edit Portal</span>
+      </button>
+      <h1 class="static-title font-display">TERMS OF SERVICE</h1>
+      <p class="static-date font-mono">Last updated: October 2026</p>
+
+      <div class="static-body">
+        <h3>1. Acceptance of Terms</h3>
+        <p>By using Edit Portal (editportal.net) and its suite of browser utilities, you agree to these Terms of Service. Edit Portal is provided free of charge for commercial and non-commercial editing workflows.</p>
+
+        <h3>2. Ownership and Output</h3>
+        <p>All rights, title, and interest in and to your original media, generated WAV files, cue markers, patched AEP projects, and rendered videos remain 100% yours.</p>
+
+        <h3>3. Trademarks Disclaimer</h3>
+        <p>Adobe, After Effects, and Premiere Pro are registered trademarks of Adobe Inc. Edit Portal is an independent platform and is not affiliated with, sponsored, or endorsed by Adobe Inc.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 404 Not Found -->
+  <section id="notfound" class="spa-view static-view hidden">
+    <div class="static-container text-center">
+      <h1 class="static-404 font-display text-gradient">404</h1>
+      <h2 class="font-display">FRAME DROP // SEQUENCE NOT FOUND</h2>
+      <p class="text-muted font-mono mt-2 mb-6">The requested timecode or cut point does not exist in this reel.</p>
+      <button class="back-home ep-btn ep-btn--hero ep-btn--glow">Return to Timeline Home</button>
+    </div>
+  </section>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
